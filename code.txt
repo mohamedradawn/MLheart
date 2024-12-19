@@ -1,0 +1,36 @@
+import numpy as np
+import pandas as pd
+
+data = pd.read_csv('heart.csv')
+data.shape
+data.head(10)
+
+data['target'].unique()
+data = data.drop_duplicates()
+
+x = data.iloc[: , :-1 ]
+y = data.iloc[: , -1 ]
+
+from sklearn.impute import SimpleImputer
+imp = SimpleImputer(missing_values=np.nan , strategy='mean')
+imp = imp.fit_transform(data)
+
+from sklearn.model_selection import train_test_split
+x_train , x_test , y_train , y_test = train_test_split(x,y,test_size=.2)
+
+from sklearn.linear_model import LogisticRegression
+LogisticRegressionModel = LogisticRegression(max_iter=1000) # , solver='liblinear' , 'saga' , 'lbfgs'
+LogisticRegressionModel.fit(x_train, y_train)
+score_train = LogisticRegressionModel.score(x_train, y_train)
+score_train
+score_test = LogisticRegressionModel.score(x_test, y_test)
+score_test
+y_predict= LogisticRegressionModel.predict(x_test)
+y_test[:10]
+y_predict[:10]
+LogisticRegressionModel.n_iter_ # as number of iter > max_iter as the result is good 1000>854
+LogisticRegressionModel.classes_ #values
+
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(y_test , y_predict)
+cm
